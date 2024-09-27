@@ -1,77 +1,167 @@
 import 'package:flutter/material.dart';
 
-// Defining the BankTransferPage class
 class BankTransferPage extends StatelessWidget {
-  // Controllers to manage the input fields
-  final TextEditingController recipientNameController = TextEditingController(); // Controller for recipient's name input
-  final TextEditingController accountNumberController = TextEditingController(); // Controller for recipient's account number input
-  final TextEditingController amountController = TextEditingController(); // Controller for transfer amount input
+  final TextEditingController recipientNameController = TextEditingController();
+  final TextEditingController accountNumberController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bank Transfer'), // Title displayed in the AppBar
-        backgroundColor: Colors.teal, // Background color of the AppBar
+        title: Text(
+          'Bank Transfer',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.teal,
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0), // Padding around the form content
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Center the column's content vertically
-          children: [
-            // Input field for recipient's name
-            TextField(
-              controller: recipientNameController, // Connects the controller to manage the recipient's name input
-              decoration: InputDecoration(
-                labelText: 'Recipient\'s Name', // Label for the recipient's name input field
-                border: OutlineInputBorder(), // Outline border around the input field
+      body: Stack(
+        children: [
+          // Background Image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                    'assets/jk.jpg'), // Ensure jk.jpg is in the assets folder
+                fit: BoxFit.cover,
               ),
             ),
-            SizedBox(height: 16.0), // Space between the input fields
+          ),
+          // Semi-transparent overlay to ensure readability of text
+          Container(
+            color: Colors.black.withOpacity(0.6),
+          ),
+          // Content area
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 20),
+                _buildTextField(
+                  controller: recipientNameController,
+                  label: 'Recipient\'s Name',
+                  icon: Icons.person,
+                ),
+                SizedBox(height: 20),
+                _buildTextField(
+                  controller: accountNumberController,
+                  label: 'Recipient\'s Account Number',
+                  icon: Icons.account_balance,
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 20),
+                _buildTextField(
+                  controller: amountController,
+                  label: 'Amount',
+                  icon: Icons.attach_money,
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 30),
+                // Transfer Button
+                ElevatedButton(
+                  onPressed: () {
+                    String recipientName = recipientNameController.text;
+                    String accountNumber = accountNumberController.text;
+                    String amount = amountController.text;
 
-            // Input field for recipient's account number
-            TextField(
-              controller: accountNumberController, // Connects the controller to manage the account number input
-              decoration: InputDecoration(
-                labelText: 'Recipient\'s Account Number', // Label for the account number input field
-                border: OutlineInputBorder(), // Outline border around the input field
-              ),
-              keyboardType: TextInputType.number, // Numeric keyboard for entering the account number
+                    if (_validateInputs(
+                        context, recipientName, accountNumber, amount)) {
+                      print(
+                          'Transferring $amount to $recipientName (Account: $accountNumber)');
+                      _showConfirmationDialog(
+                          context, recipientName, accountNumber, amount);
+                    }
+                  },
+                  child: Text(
+                    'Transfer',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 16.0), // Space between the input fields
+          ),
+        ],
+      ),
+    );
+  }
 
-            // Input field for transfer amount
-            TextField(
-              controller: amountController, // Connects the controller to manage the transfer amount input
-              decoration: InputDecoration(
-                labelText: 'Amount', // Label for the amount input field
-                border: OutlineInputBorder(), // Outline border around the input field
-              ),
-              keyboardType: TextInputType.number, // Numeric keyboard for entering the amount
-            ),
-            SizedBox(height: 20.0), // Space between the input fields and button
-
-            // Transfer button
-            ElevatedButton(
-              onPressed: () {
-                // Logic to handle the bank transfer action when the button is pressed
-                String recipientName = recipientNameController.text; // Get the recipient's name from input
-                String accountNumber = accountNumberController.text; // Get the account number from input
-                String amount = amountController.text; // Get the amount from input
-
-                // Add your bank transfer logic here (e.g., API call)
-                print('Transferring $amount to $recipientName (Account: $accountNumber)'); // Debug output to console
-                // Optionally, show a confirmation message or navigate to another page after the operation
-              },
-              child: Text('Transfer'), // Text displayed on the button
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal, // Background color of the button
-                padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0), // Padding inside the button
-              ),
-            ),
-          ],
+  // Reusable TextField widget
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      style: TextStyle(color: Colors.white), // Text color for better visibility
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.tealAccent), // Label color
+        prefixIcon: Icon(icon, color: Colors.tealAccent), // Icon inside input
+        filled: true,
+        fillColor:
+            Colors.white.withOpacity(0.1), // Subtle background for input fields
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.tealAccent),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.tealAccent, width: 2.0),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
+      keyboardType: keyboardType,
+    );
+  }
+
+  // Validate inputs
+  bool _validateInputs(
+      BuildContext context, String name, String account, String amount) {
+    if (name.isEmpty || account.isEmpty || amount.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please fill in all fields'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
+
+  // Show confirmation dialog after transfer
+  void _showConfirmationDialog(
+      BuildContext context, String name, String account, String amount) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Transfer Confirmation'),
+          content: Text(
+              'Successfully transferred $amount to $name (Account: $account).'),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

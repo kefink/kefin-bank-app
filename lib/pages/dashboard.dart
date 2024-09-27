@@ -1,99 +1,183 @@
 import 'package:flutter/material.dart';
-import 'savings_page.dart'; // Import SavingsPage
-import 'loan_page.dart'; // Import LoanPage
-import 'account_page.dart'; // Import AccountPage
+import 'savings_page.dart';
+import 'loan_page.dart';
+import 'account_page.dart';
 
-// Main dashboard for the app
 class DashboardPage extends StatefulWidget {
   @override
-  _DashboardPageState createState() => _DashboardPageState(); // Create state for the DashboardPage
+  _DashboardPageState createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int _selectedIndex = 0; // Keeps track of the selected tab in the bottom navigation
+  int _selectedIndex = 0;
 
-  // List of pages to switch between when a tab is selected
   final List<Widget> _pages = <Widget>[
-    DashboardGrid(), // Dashboard grid view for the home tab
-    SavingsPage(), // Updated to the actual SavingsPage widget
-    LoanPage(), // Updated to the actual LoanPage widget
-    AccountPage(), // Updated to the actual AccountPage widget
+    DashboardGrid(),
+    SavingsPage(),
+    LoanPage(),
+    AccountPage(),
   ];
 
-  // Method to handle taps on the bottom navigation bar
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index; // Update the selected index based on the tap
+      _selectedIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea( // Ensures content is rendered within safe areas like notches or status bars
-      child: Scaffold( // Main visual structure of the app
-        appBar: AppBar( // Top bar with title and optional actions
-          title: Text('PocketWallet'), // App bar title
-          backgroundColor: Colors.teal, // Background color for the app bar
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'PocketWallet',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        body: _pages[_selectedIndex], // Display the current page based on the selected index
-        bottomNavigationBar: BottomNavigationBar( // Bottom navigation bar for switching between pages
-          currentIndex: _selectedIndex, // Highlight the currently selected tab
-          onTap: _onItemTapped, // Set the tap handler to update the index
-          selectedItemColor: Colors.teal, // Color of the selected item
-          unselectedItemColor: Colors.grey, // Color of unselected items
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'), // Home tab
-            BottomNavigationBarItem(icon: Icon(Icons.savings), label: 'Savings'), // Savings tab
-            BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Loan'), // Loan tab
-            BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Account'), // Account tab
-          ],
-        ),
+        backgroundColor: Colors.teal,
+        centerTitle: true,
+      ),
+      body: Stack(
+        children: [
+          // Background Image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/jk.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Semi-transparent overlay
+          Container(
+            color: Colors.black.withOpacity(0.6),
+          ),
+          // Main content
+          _pages[_selectedIndex],
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.tealAccent,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.black.withOpacity(0.8),
+        showUnselectedLabels: true,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.savings), label: 'Savings'),
+          BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Loan'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle), label: 'Account'),
+        ],
       ),
     );
   }
 }
 
-// DashboardGrid is the grid layout displayed on the home page of the dashboard
 class DashboardGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView( // Allows scrolling if content exceeds screen height
-      child: GridView.count( // Create a grid view with a fixed number of columns
-        crossAxisCount: 3, // Three columns in the grid
-        shrinkWrap: true, // Shrinks the grid to fit its content
-        physics: NeverScrollableScrollPhysics(), // Disable scrolling for this grid (handled by parent)
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0), // Padding around the grid
-        crossAxisSpacing: 12.0, // Horizontal space between grid items
-        mainAxisSpacing: 16.0, // Vertical space between grid items
+    return SingleChildScrollView(
+      child: GridView.count(
+        crossAxisCount: 3,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+        crossAxisSpacing: 12.0,
+        mainAxisSpacing: 16.0,
         children: <Widget>[
-          _buildDashboardItem(context, Icons.send, 'Send Money', '/sendmoney'), // Send Money item
-          _buildDashboardItem(context, Icons.payment, 'Pay Bills', '/paybills'), // Pay Bills item
-          _buildDashboardItem(context, Icons.phone, 'Buy Airtime', '/buyairtime'), // Buy Airtime item
-          _buildDashboardItem(context, Icons.attach_money, 'Withdraw', '/withdraw'), // Withdraw item
-          _buildDashboardItem(context, Icons.sync_alt, 'Bank Transfer', '/banktransfer'), // Bank Transfer item
-          _buildDashboardItem(context, Icons.account_balance_wallet, 'Deposit', '/deposit'), // Deposit item
+          _buildDashboardItem(context, Icons.send, 'Send Money', '/sendmoney'),
+          _buildDashboardItem(context, Icons.payment, 'Pay Bills', '/paybills'),
+          _buildDashboardItem(
+              context, Icons.phone, 'Buy Airtime', '/buyairtime'),
+          _buildDashboardItem(
+              context, Icons.attach_money, 'Withdraw', '/withdraw'),
+          _buildDashboardItem(
+              context, Icons.sync_alt, 'Bank Transfer', '/banktransfer'),
+          _buildDashboardItem(
+              context, Icons.account_balance_wallet, 'Deposit', '/deposit'),
         ],
       ),
     );
   }
 
-  // Builds a single dashboard item (icon + label) that navigates to a new page when tapped
-  Widget _buildDashboardItem(BuildContext context, IconData icon, String label, String route) {
-    return GestureDetector( // Detects tap events on the grid item
+  // Builds each dashboard item with hover animation
+  Widget _buildDashboardItem(
+      BuildContext context, IconData icon, String label, String route) {
+    return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, route); // Navigate to the route when the item is tapped
+        Navigator.pushNamed(context, route);
       },
-      child: Card( // Creates a card-like visual element for each grid item
-        color: Colors.white, // Card background color
-        elevation: 2.0, // Shadow effect for the card
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)), // Rounded corners for the card
-        child: Column( // Vertically aligns icon and text
-          mainAxisAlignment: MainAxisAlignment.center, // Center content vertically in the card
-          children: <Widget>[
-            Icon(icon, size: 36.0, color: Colors.teal), // Icon displayed for the grid item
-            SizedBox(height: 8.0), // Spacing between the icon and the text
-            Text(label, style: TextStyle(fontSize: 12.0, color: Colors.teal)), // Label text under the icon
-          ],
+      child: MouseRegion(
+        onEnter: (_) {},
+        onExit: (_) {},
+        child: _HoverIconCard(icon: icon, label: label),
+      ),
+    );
+  }
+}
+
+class _HoverIconCard extends StatefulWidget {
+  final IconData icon;
+  final String label;
+
+  const _HoverIconCard({
+    Key? key,
+    required this.icon,
+    required this.label,
+  }) : super(key: key);
+
+  @override
+  _HoverIconCardState createState() => _HoverIconCardState();
+}
+
+class _HoverIconCardState extends State<_HoverIconCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() {
+          _isHovered = true;
+        });
+      },
+      onExit: (_) {
+        setState(() {
+          _isHovered = false;
+        });
+      },
+      child: AnimatedScale(
+        scale: _isHovered ? 1.1 : 1.0,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        child: Card(
+          elevation: 4.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            side: BorderSide(
+              color: _isHovered
+                  ? Colors.yellow
+                  : Colors.transparent, // Yellow border on hover
+              width: _isHovered ? 3.0 : 2.0, // Increased border width on hover
+            ),
+          ),
+          color:
+              Colors.black.withOpacity(0.7), // Darker background for the card
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(widget.icon, size: 40.0, color: Colors.tealAccent),
+              SizedBox(height: 10.0),
+              Text(
+                widget.label,
+                style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.tealAccent),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

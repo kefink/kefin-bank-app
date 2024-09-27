@@ -1,63 +1,140 @@
-import 'package:flutter/material.dart'; // Importing Flutter material package for UI components
+import 'package:flutter/material.dart';
 
-// AccountPage is a StatelessWidget that represents the account overview screen
 class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold( // Scaffold provides the basic visual structure for the page
-      appBar: AppBar( // AppBar widget for the top bar
-        title: Text('Account Overview'), // Title displayed in the AppBar
-        backgroundColor: Colors.teal, // Background color of the AppBar
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Account Overview'),
+        backgroundColor: Colors.yellow,
       ),
-      body: Padding( // Padding around the body content
-        padding: const EdgeInsets.all(16.0), // Padding value set to 16 pixels on all sides
-        child: Column( // Column widget to arrange child widgets vertically
-          crossAxisAlignment: CrossAxisAlignment.start, // Align children to the start of the column
-          children: <Widget>[
-            // Displaying account holder's name
-            Text(
-              'Account Holder: Allan Allan', // Text displaying account holder's name
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Styling the text
+      body: SingleChildScrollView(
+        // Making the content scrollable
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/jk.jpg'), // Background image
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.6), // Apply a darker overlay
+                BlendMode.darken,
+              ),
             ),
-            SizedBox(height: 10), // Spacing between elements
-            // Displaying account number
-            Text(
-              'Account Number: 1234567890', // Text displaying account number
-              style: TextStyle(fontSize: 16), // Styling the text
+          ),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                
+                _buildInfoCard('Account Holder', 'Kevin Kinyua', Icons.person),
+                SizedBox(height: 20),
+
+                
+                _buildInfoCard(
+                    'Account Number', '5012346789', Icons.account_balance),
+                SizedBox(height: 20),
+
+              
+                _buildInfoCard(
+                    'Account Balance', '\$8,000', Icons.attach_money),
+                SizedBox(height: 30),
+
+                
+                Text(
+                  'Account Details',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10),
+
+                // ListTile for email
+                _buildDetailTile('kevinmugo359@gmail.com', Icons.email),
+                // ListTile for phone
+                _buildDetailTile('Phone: +254 05 204-804', Icons.phone),
+
+                SizedBox(height: 30),
+
+                // Button for editing account settings
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _showAccountSettings(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 30.0),
+                      child: Text('Edit Account Settings'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 5, // Shadow for button
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 10), // Spacing between elements
-            // Displaying account balance
-            Text(
-              'Account Balance: \$5,000', // Text displaying account balance
-              style: TextStyle(fontSize: 16), // Styling the text
-            ),
-            SizedBox(height: 20), // Spacing between elements
-            // Section title for account details
-            Text(
-              'Account Details', // Section title text
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // Styling the title
-            ),
-            // ListTile displaying email information
-            ListTile(
-              title: Text('Email: allan@example.com'), // Text displaying email
-            ),
-            // ListTile displaying phone information
-            ListTile(
-              title: Text('Phone: +254 778 567-8901'), // Text displaying phone number
-            ),
-            SizedBox(height: 20), // Spacing between elements
-            // Button for editing account settings
-            ElevatedButton(
-              onPressed: () {
-                // Handle account settings logic
-                _showAccountSettings(context); // Call to show account settings dialog
-              },
-              child: Text('Edit Account Settings'), // Button text
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal), // Button color
-            ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  // A method to build a card-like widget for account information
+  Widget _buildInfoCard(String label, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white
+            .withOpacity(0.2), // Slightly transparent white background
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white),
+          SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70, // Slightly faded white for labels
+                ),
+              ),
+              SizedBox(height: 5),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // A method to build a ListTile for account details like email and phone
+  Widget _buildDetailTile(String detail, IconData icon) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white),
+      title: Text(
+        detail,
+        style: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 5.0),
     );
   }
 
@@ -66,15 +143,14 @@ class AccountPage extends StatelessWidget {
     showDialog(
       context: context, // Context for the dialog
       builder: (BuildContext context) {
-        return AlertDialog( // AlertDialog widget for showing messages
-          title: Text('Account Settings'), // Title of the dialog
-          content: Text('You can edit your account settings here.'), // Content of the dialog
+        return AlertDialog(
+          title: Text('Account Settings'),
+          content: Text('You can edit your account settings here.'),
           actions: <Widget>[
-            // Button to close the dialog
             TextButton(
-              child: Text('OK'), // Button text
+              child: Text('OK'),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog when pressed
+                Navigator.of(context).pop();
               },
             ),
           ],
